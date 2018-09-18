@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject.Persistence", "TestProject\TestProject.Persistence.csproj", "{EDB98E40-2B20-41B7-B61E-0788C1712C36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject.DataBase", "TestProject\TestProject.DataBase.csproj", "{EDB98E40-2B20-41B7-B61E-0788C1712C36}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject.WebApi", "TestProject.WebApi\TestProject.WebApi.csproj", "{7D23D5FE-5AC0-4942-A80B-36C4A8442ECB}"
 EndProject

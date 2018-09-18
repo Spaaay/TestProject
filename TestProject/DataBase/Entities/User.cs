@@ -3,7 +3,7 @@
 namespace TestProject.DataBase.Entities
 {
     [Table("User")]
-    class User
+    public class User
     {
         public int Id { get; set; }
 

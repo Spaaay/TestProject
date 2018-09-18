@@ -68,7 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBase\DBContext.cs" />
+    <Compile Include="DataBase\TestProjectContext.cs" />
     <Compile Include="DataBase\ConnectToDataBase.cs" />
     <Compile Include="DataBase\Entities\Discipline.cs" />
     <Compile Include="DataBase\Entities\Group.cs" />

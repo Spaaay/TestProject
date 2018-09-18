@@ -3,10 +3,10 @@
 namespace TestProject.DataBase.Entities
 {
     [Table("Aggression")]
-    class Discipline { 
+    public class Discipline { 
 
     public int Id { get; set; }
 
-    public string DisName { get; set; }
+    public string dis_name { get; set; }
 }
 }
