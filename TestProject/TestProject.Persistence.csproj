@@ -82,6 +82,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="bin\Debug\TestProjectBD.db" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
