@@ -7,12 +7,16 @@ namespace TestProject.DataBase.Entities
     {
         public int Id { get; set; }
 
+        [Column("fullname")]
         public string FullName { get; set; }
 
+        [Column("login")]
         public string Login { get; set; }
 
+        [Column("password")]
         public string Password { get; set; }
 
-        public string GroupId { get; set; }
+        [Column("group_id")]
+        public int? GroupId { get; set; }
     }
 }
