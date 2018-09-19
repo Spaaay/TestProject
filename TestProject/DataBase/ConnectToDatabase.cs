@@ -9,15 +9,12 @@ namespace TestProject.DataBase
     {
         public static TestProjectContext Db;
 
-        static ConnectToDataBase()
+         static ConnectToDataBase()
         {
             var connection = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            SQLiteConnection sqlite = new SQLiteConnection(connection);
+            SQLiteConnection sqlite = new SQLiteConnection(connection, true);
             sqlite.Open();
             Db = new TestProjectContext();
-            Db.Disciplines.Load();
-            Console.WriteLine(Db.Disciplines.FirstOrDefault());
-            Console.ReadLine();
         }
     }
 }

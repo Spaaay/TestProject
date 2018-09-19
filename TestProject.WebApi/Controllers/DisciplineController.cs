@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
@@ -15,7 +16,9 @@ namespace TestProject.WebApi.Controllers
         [Route("api/discipline")]
         public IEnumerable<Discipline> Get()
         {
-            ConnectToDataBase.Db.Users.Load();
+            ConnectToDataBase.Db.Disciplines.Load();
+            Console.WriteLine(ConnectToDataBase.Db.Disciplines.FirstOrDefault());
+            Console.ReadLine();
             //var r = ConnectToDataBase.Db.Disciplines;
             return new List<Discipline>();
         }

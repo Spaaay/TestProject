@@ -2,10 +2,10 @@
 
 namespace TestProject.DataBase.Entities
 {
-    [Table("Aggression")]
+    [Table("Discipline")]
     public class Discipline { 
 
-    public int Id { get; set; }
+    public int id { get; set; }
 
     public string dis_name { get; set; }
 }
