@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Data.SQLite;
-using System.Linq;
 
 namespace TestProject.DataBase
 {
@@ -12,6 +10,7 @@ namespace TestProject.DataBase
          static ConnectToDataBase()
         {
             var connection = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            Console.WriteLine(connection);
             SQLiteConnection sqlite = new SQLiteConnection(connection, true);
             sqlite.Open();
             Db = new TestProjectContext();

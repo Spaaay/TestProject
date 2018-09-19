@@ -7,8 +7,10 @@ namespace TestProject.DataBase.Entities
     {
         public int Id { get; set; }
 
+        [Column("fullname")]
         public string FullName { get; set; }
 
+        [Column("phone")]
         public string Phone { get; set; }
     }
 }

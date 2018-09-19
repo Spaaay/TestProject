@@ -7,16 +7,21 @@ namespace TestProject.DataBase.Entities
     {
         public int Id { get; set; }
 
-        public string DisciplineId { get; set; }
+        [Column("discipline_id")]
+        public int DisciplineId { get; set; }
 
         public string Data { get; set; }
 
+        [Column("starttime")]
         public string StartTime { get; set; }
 
+        [Column("endtime")]
         public string EndTime { get; set; }
 
-        public string TeacherId { get; set; }
+        [Column("teacher_id")]
+        public int TeacherId { get; set; }
 
-        public string GroupId { get; set; }
+        [Column("group_id")]
+        public int GroupId { get; set; }
     }
 }

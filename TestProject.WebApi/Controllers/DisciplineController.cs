@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using System.Web.Http;
 using Microsoft.Web.Http;
 using TestProject.DataBase;
 using TestProject.DataBase.Entities;
+using static TestProject.DataBase.ConnectToDataBase;
 
 namespace TestProject.WebApi.Controllers
 {
@@ -16,32 +15,48 @@ namespace TestProject.WebApi.Controllers
         [Route("api/discipline")]
         public IEnumerable<Discipline> Get()
         {
-            ConnectToDataBase.Db.Disciplines.Load();
-            Console.WriteLine(ConnectToDataBase.Db.Disciplines.FirstOrDefault());
-            Console.ReadLine();
-            //var r = ConnectToDataBase.Db.Disciplines;
-            return new List<Discipline>();
+            Db.Disciplines.Load();
+            var r = Db.Disciplines;
+            return r;
         }
 
         // GET: api/Discipline/5
         public string Get(int id)
         {
-            return "value";
+            Db.Disciplines.Load();
+            var r = Db.Disciplines.Find(id).DisciplineName;
+            return r;
         }
 
         // POST: api/Discipline
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Discipline value)
         {
+            Db.Disciplines.Load();
+            Db.Disciplines.Add(value);
+            Db.SaveChanges();
+
         }
 
         // PUT: api/Discipline/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]Discipline value)
         {
+            Db.Disciplines.Load();
+            var r = Db.Disciplines.Find(id);
+            r.id = value.id;
+            r.DisciplineName = value.DisciplineName;
+            Db.SaveChanges();
         }
 
         // DELETE: api/Discipline/5
         public void Delete(int id)
         {
+            var temp = Db.Disciplines.Find(id);
+            if (temp != null) { 
+            Db.Disciplines.Load();
+            Db.Disciplines.Remove(temp);
+            Db.SaveChanges();
+            }
+
         }
     }
 }
