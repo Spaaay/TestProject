@@ -24,7 +24,7 @@ namespace TestProject.WebApi.Controllers
         public string Get(int id)
         {
             Db.Disciplines.Load();
-            var r = Db.Disciplines.Find(id).DisciplineName;
+            var r = Db.Disciplines.Find(id)?.DisciplineName;
             return r;
         }
 
@@ -34,7 +34,6 @@ namespace TestProject.WebApi.Controllers
             Db.Disciplines.Load();
             Db.Disciplines.Add(value);
             Db.SaveChanges();
-
         }
 
         // PUT: api/Discipline/5
@@ -42,7 +41,6 @@ namespace TestProject.WebApi.Controllers
         {
             Db.Disciplines.Load();
             var r = Db.Disciplines.Find(id);
-            r.id = value.id;
             r.DisciplineName = value.DisciplineName;
             Db.SaveChanges();
         }
@@ -56,7 +54,6 @@ namespace TestProject.WebApi.Controllers
             Db.Disciplines.Remove(temp);
             Db.SaveChanges();
             }
-
         }
     }
 }

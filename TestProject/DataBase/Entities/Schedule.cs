@@ -10,6 +10,7 @@ namespace TestProject.DataBase.Entities
         [Column("discipline_id")]
         public int DisciplineId { get; set; }
 
+        [Column("date")]
         public string Data { get; set; }
 
         [Column("starttime")]
