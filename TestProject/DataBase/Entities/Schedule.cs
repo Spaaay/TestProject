@@ -24,5 +24,15 @@ namespace TestProject.DataBase.Entities
 
         [Column("group_id")]
         public int GroupId { get; set; }
+
+        [ForeignKey("TeacherId")]
+        public virtual Teacher Teacher { get; set; }
+
+        [ForeignKey("GroupId")]
+        public virtual Group Group { get; set; }
+
+        [ForeignKey("DisciplineId")]
+        public virtual Discipline Discipline { get; set; }
+
     }
 }

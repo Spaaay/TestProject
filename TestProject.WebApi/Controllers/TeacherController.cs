@@ -23,8 +23,17 @@ namespace TestProject.WebApi.Controllers
         public string Get(int id)
         {
             Db.Teachers.Load();
-            var r = Db.Teachers.Find(id)?.FullName;
-            return r;
+            var result = string.Empty;
+            if (Db.Teachers.Find(id) != null)
+            {
+                var t = Db.Teachers.Find(id);
+                foreach (var w in t.Disciplines)
+                {
+                    result = result + w.DisciplineName + " ";
+                }
+                return ("Имя: " +  t.FullName + " Тел: " + t.Phone + " Предметы:  " + result).Trim();
+            }
+            return "Не найдено учителя";
         }
 
         // POST: api/Teacher

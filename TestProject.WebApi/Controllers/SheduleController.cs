@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Web.Http;
 using Microsoft.Web.Http;
 using TestProject.DataBase.Entities;
@@ -23,8 +24,12 @@ namespace TestProject.WebApi.Controllers
         public string Get(int id)
         {
             Db.Schedules.Load();
-            var r = Db.Schedules.Find(id);
-            return r.Data + " " + r.StartTime + " " + r.EndTime + " " + r.DisciplineId + " " + r.TeacherId + " " + r.GroupId;
+            if (Db.Schedules.Find(id) != null)
+            {
+                var r = Db.Schedules.Find(id);
+                return ("Дата: " + r.Data + " Начало: " + r.StartTime + " Конец: " + r.EndTime + " Предмет: " + r.Discipline.DisciplineName + " Преподаватель: " + r.Teacher.FullName + " Группа " + r.Group.GroupName).Trim();
+            }
+            return "Не найдено группы";
         }
 
         // POST: api/Shedule

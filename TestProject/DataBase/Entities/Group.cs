@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TestProject.DataBase.Entities
 {
@@ -15,6 +17,8 @@ namespace TestProject.DataBase.Entities
 
         [Column("end_date")]
         public string EndDate { get; set; }
+        
+        public virtual ICollection<User> Users { get; set; }
 
     }
 }

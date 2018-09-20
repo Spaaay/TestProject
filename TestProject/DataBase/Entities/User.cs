@@ -16,7 +16,10 @@ namespace TestProject.DataBase.Entities
         [Column("password")]
         public string Password { get; set; }
 
+
         [Column("group_id")]
         public int? GroupId { get; set; }
+
+        public virtual Group Group { get; set; }
     }
 }

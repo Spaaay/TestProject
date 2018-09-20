@@ -23,8 +23,17 @@ namespace TestProject.WebApi.Controllers
         public string Get(int id)
         {
             Db.Groups.Load();
-            var r = Db.Groups.Find(id)?.GroupName;
-            return r;
+            var result = string.Empty;
+            if (Db.Groups.Find(id) != null)
+            {
+                var t = Db.Groups.Find(id);
+                foreach (var w in t.Users)
+                {
+                    result = result + w.FullName + " ";
+                }
+                return ("Группа: " + t.GroupName + " Начало: " + t.StartDate + " Конец: " + t.EndDate + " Студенты:  " + result).Trim();
+            }
+            return "Не найдено группы";
         }
 
         // POST: api/Group

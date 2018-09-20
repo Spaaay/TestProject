@@ -7,9 +7,14 @@ namespace TestProject.DataBase.Entities
     public class Discipline
     {
         [Key]
-        public int id { get; set; }
+        [Column("id")]
+        public int DisciplineId { get; set; }
+
         [Column("dis_name")]
         public string DisciplineName { get; set; }
+
+        [Column("teacher_id")]
+        public int TeacherId { get; set; }
 
         public virtual Teacher Teacher { get; set; }
     }

@@ -7,7 +7,7 @@ namespace TestProject.DataBase
     {
         public static TestProjectContext Db;
 
-         static ConnectToDataBase()
+        static ConnectToDataBase()
         {
             var connection = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             Console.WriteLine(connection);
