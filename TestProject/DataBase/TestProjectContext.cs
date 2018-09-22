@@ -1,9 +1,9 @@
 ﻿using System.Data.Entity;
-using TestProject.DataBase.Entities;
+using TestProject.DataBase.DataBase.Entities;
 
-namespace TestProject.DataBase
+namespace TestProject.DataBase.DataBase
 {
-    public class TestProjectContext : System.Data.Entity.DbContext
+    public class TestProjectContext : DbContext
     {
 
         public TestProjectContext() : base("DefaultConnection") { }

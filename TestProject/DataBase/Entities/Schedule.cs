@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TestProject.DataBase.Entities
+namespace TestProject.DataBase.DataBase.Entities
 {
     [Table("Schedule")]
     public class Schedule
     {
+        [Column("id")]
         public int Id { get; set; }
 
         [Column("discipline_id")]

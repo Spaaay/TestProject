@@ -9,19 +9,14 @@ namespace TestProject.WebApi.Controllers
     public class TokenController : ApiController
     {
         // GET: api/Token
-        [Route("api/token")]
         public IEnumerable<string> Get()
         {
-
-
-
             return new string[] { "value1", "value2" };
         }
 
         // GET: api/Token/5
         public string Get(int id)
         {
-
             return "value";
         }
 

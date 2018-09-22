@@ -1,68 +1,112 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
+using System.Linq;
 using System.Web.Http;
 using Microsoft.Web.Http;
-using TestProject.DataBase.Entities;
-using static TestProject.DataBase.ConnectToDataBase;
+using TestProject.DataBase.DataBase;
+using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
     [ApiVersion("1.0")]
     public class TeacherController : ApiController
     {
-        [Route("api/user")]
-        // GET: api/Teacher
+        //GET: api/Teacher
         public IEnumerable<Teacher> Get()
         {
-            Db.Teachers.Load();
-            var r = Db.Teachers;
-            return r;
+            try
+            {
+                var users = new List<Teacher>();
+                using (var connection = ConnectToDataBase.GetConnection())
+                {
+                    connection.Open();
+                    using (var context = new TestProjectContext())
+                    {
+                        context.Teachers.Load();
+                        users = context.Teachers.ToList();
+                    }
+                }
+                return users;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // GET: api/Teacher/5
-        public string Get(int id)
+        public Teacher Get(int id)
         {
-            Db.Teachers.Load();
-            var result = string.Empty;
-            if (Db.Teachers.Find(id) != null)
+            using (var connection = ConnectToDataBase.GetConnection())
             {
-                var t = Db.Teachers.Find(id);
-                foreach (var w in t.Disciplines)
+                connection.Open();
+                var t = new Teacher();
+                using (var context = new TestProjectContext())
                 {
-                    result = result + w.DisciplineName + " ";
+                    context.Teachers.Load();
+                    if (context.Teachers.Find(id) != null)
+                    {
+                        t = context.Teachers.Find(id);
+                    }
                 }
-                return ("Имя: " +  t.FullName + " Тел: " + t.Phone + " Предметы:  " + result).Trim();
+                return t;
             }
-            return "Не найдено учителя";
         }
 
         // POST: api/Teacher
         public void Post([FromBody]Teacher value)
         {
-            Db.Teachers.Load();
-            Db.Teachers.Add(value);
-            Db.SaveChanges();
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Teachers.Load();
+                    context.Teachers.Add(value);
+                    context.SaveChanges();
+                }
+            }
         }
 
         // PUT: api/Teacher/5
         public void Put(int id, [FromBody]Teacher value)
         {
-            Db.Teachers.Load();
-            var r = Db.Teachers.Find(id);
-            r.FullName = value.FullName;
-            r.Phone = value.Phone;
-            Db.SaveChanges();
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Teachers.Load();
+                    var r = context.Teachers.Find(id);
+                    if (r != null)
+                    {
+                        r.FullName = value.FullName;
+                        r.Phone = value.Phone;
+                        context.SaveChanges();
+                    }
+                }
+            }
         }
 
         // DELETE: api/Teacher/5
         public void Delete(int id)
         {
-            var temp = Db.Teachers.Find(id);
-            if (temp != null)
+            using (var connection = ConnectToDataBase.GetConnection())
             {
-                Db.Teachers.Load();
-                Db.Teachers.Remove(temp);
-                Db.SaveChanges();
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    var temp = context.Teachers.Find(id);
+                    if (temp != null)
+                    {
+                        context.Teachers.Load();
+                        context.Teachers.Remove(temp);
+                        context.SaveChanges();
+                    }
+                }
             }
         }
     }

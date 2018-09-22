@@ -1,62 +1,114 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
+using System.Linq;
 using System.Web.Http;
 using Microsoft.Web.Http;
-using TestProject.DataBase.Entities;
-using static TestProject.DataBase.ConnectToDataBase;
+using TestProject.DataBase.DataBase;
+using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
     [ApiVersion("1.0")]
     public class UserController : ApiController
     {
-        [Route("api/user")]
-        // GET: api/User
+        //GET: api/User
         public IEnumerable<User> Get()
         {
-            Db.Users.Load();
-            var r = Db.Users;
-            return r;
+            try
+            {
+                var users = new List<User>();
+                using (var connection = ConnectToDataBase.GetConnection())
+                {
+                    connection.Open();
+                    using (var context = new TestProjectContext())
+                    {
+                        context.Users.Load();
+                        users = context.Users.ToList();
+                    }
+                }
+                return users;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // GET: api/User/5
         public string Get(int id)
         {
-            Db.Users.Load();
-            var r = Db.Users.Find(id)?.FullName;
-            return r;
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Users.Load();
+                    var r = context.Users.Find(id)?.FullName;
+                    return r;
+                }
+            }
         }
 
         // POST: api/User
-        public void Post([FromBody]User value)
+        public void Post([FromBody] User value)
         {
-            Db.Users.Load();
-            Db.Users.Add(value);
-            Db.SaveChanges();
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Users.Load();
+                    context.Users.Add(value);
+                    context.SaveChanges();
+                }
+            }
         }
 
         // PUT: api/User/5
-        public void Put(int id, [FromBody]User value)
+        public void Put(int id, [FromBody] User value)
         {
-            Db.Users.Load();
-            var r = Db.Users.Find(id);
-            r.FullName = value.FullName;
-            r.Login = value.Login;
-            r.Password = value.Password;
-            r.GroupId = value.GroupId;
-            Db.SaveChanges();
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Users.Load();
+                    var r = context.Users.Find(id);
+                    if (r != null)
+                    {
+                        r.FullName = value.FullName;
+                        r.Login = value.Login;
+                        r.Password = value.Password;
+                        r.GroupId = value.GroupId;
+                        context.SaveChanges();
+                    }
+                }
+            }
         }
+
 
         // DELETE: api/User/5
         public void Delete(int id)
         {
-            var temp = Db.Users.Find(id);
-            if (temp != null)
+            using (var connection = ConnectToDataBase.GetConnection())
             {
-                Db.Users.Load();
-                Db.Users.Remove(temp);
-                Db.SaveChanges();
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    var temp = context.Users.Find(id);
+                    if (temp != null)
+                    {
+                        context.Users.Load();
+                        context.Users.Remove(temp);
+                        context.SaveChanges();
+                    }
+                }
             }
         }
     }
 }
+
+

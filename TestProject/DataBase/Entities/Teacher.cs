@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TestProject.DataBase.Entities
+namespace TestProject.DataBase.DataBase.Entities
 {
     [Table("Teacher")]
     public class Teacher

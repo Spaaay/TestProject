@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Data.SQLite;
 
-namespace TestProject.DataBase
+namespace TestProject.DataBase.DataBase
 {
-    public static class ConnectToDataBase
+    public class ConnectToDataBase
     {
-        public static TestProjectContext Db;
+        public TestProjectContext Db;
 
-        static ConnectToDataBase()
+        public static SQLiteConnection GetConnection()
         {
-            var connection = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-            Console.WriteLine(connection);
-            SQLiteConnection sqlite = new SQLiteConnection(connection, true);
-            sqlite.Open();
-            Db = new TestProjectContext();
+            try
+            {
+                var connection = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+                Console.WriteLine(connection);
+                return new SQLiteConnection(connection, true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

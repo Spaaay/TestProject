@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TestProject.DataBase.Entities
+namespace TestProject.DataBase.DataBase.Entities
 {
     [Table("User")]
     public class User
     {
+        [Column("id")]
         public int Id { get; set; }
 
         [Column("fullname")]
@@ -15,7 +16,6 @@ namespace TestProject.DataBase.Entities
 
         [Column("password")]
         public string Password { get; set; }
-
 
         [Column("group_id")]
         public int? GroupId { get; set; }

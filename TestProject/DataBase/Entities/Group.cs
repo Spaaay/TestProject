@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TestProject.DataBase.Entities
+namespace TestProject.DataBase.DataBase.Entities
 {
     [Table("Group")]
     public class Group
     {
+        [Column("id")]
         public int Id { get; set; }
 
         [Column("group_name")]

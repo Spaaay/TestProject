@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TestProject.DataBase.Entities
+namespace TestProject.DataBase.DataBase.Entities
 {
     [Table("Discipline")]
     public class Discipline
     {
-        [Key]
         [Column("id")]
         public int DisciplineId { get; set; }
 

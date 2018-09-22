@@ -1,70 +1,115 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
+using System.Linq;
 using System.Web.Http;
 using Microsoft.Web.Http;
-using TestProject.DataBase.Entities;
-using static TestProject.DataBase.ConnectToDataBase;
+using TestProject.DataBase.DataBase;
+using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
     [ApiVersion("1.0")]
     public class GroupController : ApiController
     {
-        // GET: api/Group
-        [Route("api/discipline")]
+        //GET: api/Group
         public IEnumerable<Group> Get()
         {
-            Db.Groups.Load();
-            var r = Db.Groups;
-            return r;
+            try
+            {
+                var groups = new List<Group>();
+                using (var connection = ConnectToDataBase.GetConnection())
+                {
+                    connection.Open();
+                    using (var context = new TestProjectContext())
+                    {
+                        context.Groups.Load();
+                        groups = context.Groups.ToList();
+                    }
+                }
+                return groups;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // GET: api/Group/5
-        public string Get(int id)
+        public Group Get(int id)
         {
-            Db.Groups.Load();
-            var result = string.Empty;
-            if (Db.Groups.Find(id) != null)
+            using (var connection = ConnectToDataBase.GetConnection())
             {
-                var t = Db.Groups.Find(id);
-                foreach (var w in t.Users)
+                connection.Open();
+                var g = new Group();
+                using (var context = new TestProjectContext())
                 {
-                    result = result + w.FullName + " ";
+                    context.Groups.Load();
+                    if (context.Groups.Find(id) != null)
+                    {
+                        g = context.Groups.Find(id);
+                    }
                 }
-                return ("Группа: " + t.GroupName + " Начало: " + t.StartDate + " Конец: " + t.EndDate + " Студенты:  " + result).Trim();
+                return g;
             }
-            return "Не найдено группы";
         }
 
         // POST: api/Group
         public void Post([FromBody]Group value)
         {
-            Db.Groups.Load();
-            Db.Groups.Add(value);
-            Db.SaveChanges();
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Groups.Load();
+                    context.Groups.Add(value);
+                    context.SaveChanges();
+                }
+            }
         }
 
         // PUT: api/Group/5
         public void Put(int id, [FromBody]Group value)
         {
-            Db.Groups.Load();
-            var r = Db.Groups.Find(id);
-            r.GroupName = value.GroupName;
-            r.EndDate = value.EndDate;
-            r.StartDate = value.StartDate;
-            Db.SaveChanges();
+            using (var connection = ConnectToDataBase.GetConnection())
+            {
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    context.Groups.Load();
+                    var r = context.Groups.Find(id);
+                    if (r != null)
+                    {
+                        r.GroupName = value.GroupName;
+                        r.StartDate = value.StartDate;
+                        r.EndDate = value.EndDate;
+                        context.SaveChanges();
+                    }
+                }
+            }
         }
 
         // DELETE: api/Group/5
         public void Delete(int id)
         {
-            var temp = Db.Groups.Find(id);
-            if (temp != null)
+            using (var connection = ConnectToDataBase.GetConnection())
             {
-                Db.Groups.Load();
-                Db.Groups.Remove(temp);
-                Db.SaveChanges();
+                connection.Open();
+                using (var context = new TestProjectContext())
+                {
+                    var temp = context.Groups.Find(id);
+                    if (temp != null)
+                    {
+                        context.Groups.Load();
+                        context.Groups.Remove(temp);
+                        context.SaveChanges();
+                    }
+                }
             }
         }
     }
 }
+
