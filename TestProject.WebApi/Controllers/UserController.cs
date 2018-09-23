@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Microsoft.Web.Http;
+using Newtonsoft.Json;
 using TestProject.DataBase.DataBase;
 using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "*")]
     [ApiVersion("1.0")]
     public class UserController : ApiController
     {
         //GET: api/User
-        public IEnumerable<User> Get()
+        public string Get()
         {
             try
             {
@@ -26,9 +34,14 @@ namespace TestProject.WebApi.Controllers
                     {
                         context.Users.Load();
                         users = context.Users.ToList();
+                        return JsonConvert.SerializeObject(users, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
                     }
                 }
-                return users;
             }
             catch (Exception e)
             {
@@ -38,22 +51,26 @@ namespace TestProject.WebApi.Controllers
         }
 
         // GET: api/User/5
-        public string Get(int id)
+        public User Get(int id)
         {
             using (var connection = ConnectToDataBase.GetConnection())
             {
                 connection.Open();
+                var u = new User();
                 using (var context = new TestProjectContext())
                 {
                     context.Users.Load();
-                    var r = context.Users.Find(id)?.FullName;
-                    return r;
+                    if (context.Users.Find(id) != null)
+                    {
+                        u = context.Users.Find(id);
+                    }
                 }
+                return u;
             }
         }
 
         // POST: api/User
-        public void Post([FromBody] User value)
+        public void Post([FromBody]User value)
         {
             using (var connection = ConnectToDataBase.GetConnection())
             {
@@ -61,14 +78,17 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Users.Load();
-                    context.Users.Add(value);
-                    context.SaveChanges();
+                    if (value != null)
+                    {
+                        context.Users.Add(value);
+                        context.SaveChanges();
+                    }
                 }
             }
         }
 
         // PUT: api/User/5
-        public void Put(int id, [FromBody] User value)
+        public void Put(User value)
         {
             using (var connection = ConnectToDataBase.GetConnection())
             {
@@ -76,7 +96,7 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Users.Load();
-                    var r = context.Users.Find(id);
+                    var r = context.Users.Find(value.Id);
                     if (r != null)
                     {
                         r.FullName = value.FullName;
@@ -107,6 +127,11 @@ namespace TestProject.WebApi.Controllers
                     }
                 }
             }
+        }
+        [HttpOptions]
+        public HttpResponseMessage Options()
+        {
+            return new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
         }
     }
 }

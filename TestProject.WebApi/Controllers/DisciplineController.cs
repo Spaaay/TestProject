@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Microsoft.Web.Http;
+using Newtonsoft.Json;
 using TestProject.DataBase.DataBase;
 using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "*")]
     [ApiVersion("1.0")]
     public class DisciplineController : ApiController
     {
         //GET: api/Discipline
-        public IEnumerable<Discipline> Get()
+        public string Get()
         {
             try
             {
@@ -26,9 +31,14 @@ namespace TestProject.WebApi.Controllers
                     {
                         context.Disciplines.Load();
                         disciplines = context.Disciplines.ToList();
+                        return JsonConvert.SerializeObject(disciplines, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
                     }
                 }
-                return disciplines;
             }
             catch (Exception e)
             {
@@ -65,49 +75,60 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Disciplines.Load();
-                    context.Disciplines.Add(value);
-                    context.SaveChanges();
+                    if (value != null)
+                    {
+                        context.Disciplines.Add(value);
+                        context.SaveChanges();
+                    }
                 }
             }
         }
 
         // PUT: api/Discipline/5
-        public void Put(int id, [FromBody]Discipline value)
+        public void Put(Discipline value)
         {
-            using (var connection = ConnectToDataBase.GetConnection())
+            if (value != null && value.DisciplineId != 0)
             {
-                connection.Open();
-                using (var context = new TestProjectContext())
+                using (var connection = ConnectToDataBase.GetConnection())
                 {
-                    context.Disciplines.Load();
-                    var r = context.Disciplines.Find(id);
-                    if (r != null)
-                    {
-                        r.DisciplineName = value.DisciplineName;
-                        r.TeacherId = value.TeacherId;
-                        context.SaveChanges();
-                    }
-                }
-            }
-        }
-
-        // DELETE: api/Discipline/5
-        public void Delete(int id)
-        {
-            using (var connection = ConnectToDataBase.GetConnection())
-            {
-                connection.Open();
-                using (var context = new TestProjectContext())
-                {
-                    var temp = context.Disciplines.Find(id);
-                    if (temp != null)
+                    connection.Open();
+                    using (var context = new TestProjectContext())
                     {
                         context.Disciplines.Load();
-                        context.Disciplines.Remove(temp);
-                        context.SaveChanges();
+                        var r = context.Disciplines.Find(value.DisciplineId);
+                        if (r != null)
+                        {
+                            r.DisciplineName = value.DisciplineName;
+                            r.TeacherId = value.TeacherId;
+                            context.SaveChanges();
+                        }
                     }
+                }
+        }
+    }
+
+    // DELETE: api/Discipline/5
+    public void Delete(int id)
+    {
+        using (var connection = ConnectToDataBase.GetConnection())
+        {
+            connection.Open();
+            using (var context = new TestProjectContext())
+            {
+                var temp = context.Disciplines.Find(id);
+                if (temp != null)
+                {
+                    context.Disciplines.Load();
+                    context.Disciplines.Remove(temp);
+                    context.SaveChanges();
                 }
             }
         }
     }
+    [HttpOptions]
+    public HttpResponseMessage Options()
+    {
+        return new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+    }
+}
 }

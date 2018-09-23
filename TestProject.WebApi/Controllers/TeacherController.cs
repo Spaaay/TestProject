@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Microsoft.Web.Http;
+using Newtonsoft.Json;
 using TestProject.DataBase.DataBase;
 using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders:"*")]
     [ApiVersion("1.0")]
     public class TeacherController : ApiController
     {
         //GET: api/Teacher
-        public IEnumerable<Teacher> Get()
+        public string  Get()
         {
             try
             {
@@ -26,9 +31,14 @@ namespace TestProject.WebApi.Controllers
                     {
                         context.Teachers.Load();
                         users = context.Teachers.ToList();
+                        return JsonConvert.SerializeObject(users, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
                     }
                 }
-                return users;
             }
             catch (Exception e)
             {
@@ -65,27 +75,33 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Teachers.Load();
-                    context.Teachers.Add(value);
-                    context.SaveChanges();
+                    if (value != null)
+                    {
+                        context.Teachers.Add(value);
+                        context.SaveChanges();
+                    }
                 }
             }
         }
 
         // PUT: api/Teacher/5
-        public void Put(int id, [FromBody]Teacher value)
+        public void Put(Teacher value)
         {
-            using (var connection = ConnectToDataBase.GetConnection())
+            if (value != null && value.Id != 0)
             {
-                connection.Open();
-                using (var context = new TestProjectContext())
+                using (var connection = ConnectToDataBase.GetConnection())
                 {
-                    context.Teachers.Load();
-                    var r = context.Teachers.Find(id);
-                    if (r != null)
+                    connection.Open();
+                    using (var context = new TestProjectContext())
                     {
-                        r.FullName = value.FullName;
-                        r.Phone = value.Phone;
-                        context.SaveChanges();
+                        context.Teachers.Load();
+                        var r = context.Teachers.Find(value.Id);
+                        if (r != null)
+                        {
+                            r.FullName = value.FullName;
+                            r.Phone = value.Phone;
+                            context.SaveChanges();
+                        }
                     }
                 }
             }
@@ -108,6 +124,12 @@ namespace TestProject.WebApi.Controllers
                     }
                 }
             }
+        }
+
+        [HttpOptions]
+        public HttpResponseMessage Options()
+        {
+            return new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
         }
     }
 }

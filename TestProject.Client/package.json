@@ -18,7 +18,10 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "cross-env": "^5.2.0",
+    "css-loader": "^1.0.0",
     "npm-watch": "^0.4.0",
+    "react-modal": "^3.5.1",
+    "style-loader": "^0.23.0",
     "webpack": "^4.19.1",
     "webpack-notifier": "^1.6.0"
   },

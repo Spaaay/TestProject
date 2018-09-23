@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Microsoft.Web.Http;
+using Newtonsoft.Json;
 using TestProject.DataBase.DataBase;
 using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
+
+    [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "*")]
     [ApiVersion("1.0")]
     public class SheduleController : ApiController
     {
         //GET: api/Shedule
-        public IEnumerable<Schedule> Get()
+        public string Get()
         {
             try
             {
@@ -26,15 +32,21 @@ namespace TestProject.WebApi.Controllers
                     {
                         context.Schedules.Load();
                         scheldules = context.Schedules.ToList();
+                        return JsonConvert.SerializeObject(scheldules, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
                     }
                 }
-                return scheldules;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 throw;
             }
+
         }
 
         // GET: api/Shedule/5
@@ -65,31 +77,37 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Schedules.Load();
-                    context.Schedules.Add(value);
-                    context.SaveChanges();
+                    if (value != null)
+                    {
+                        context.Schedules.Add(value);
+                        context.SaveChanges();
+                    }
                 }
             }
         }
 
         // PUT: api/Shedule/5
-        public void Put(int id, [FromBody]Schedule value)
+        public void Put(Schedule value)
         {
-            using (var connection = ConnectToDataBase.GetConnection())
+            if (value != null && value.Id != 0)
             {
-                connection.Open();
-                using (var context = new TestProjectContext())
+                using (var connection = ConnectToDataBase.GetConnection())
                 {
-                    context.Schedules.Load();
-                    var r = context.Schedules.Find(id);
-                    if (r != null)
+                    connection.Open();
+                    using (var context = new TestProjectContext())
                     {
-                        r.TeacherId = value.TeacherId;
-                        r.Data = value.Data;
-                        r.DisciplineId = value.DisciplineId;
-                        r.EndTime = value.EndTime;
-                        r.StartTime = value.StartTime;
-                        r.GroupId = value.GroupId;
-                        context.SaveChanges();
+                        context.Schedules.Load();
+                        var r = context.Schedules.Find(value.Id);
+                        if (r != null)
+                        {
+                            r.TeacherId = value.TeacherId;
+                            r.Data = value.Data;
+                            r.DisciplineId = value.DisciplineId;
+                            r.EndTime = value.EndTime;
+                            r.StartTime = value.StartTime;
+                            r.GroupId = value.GroupId;
+                            context.SaveChanges();
+                        }
                     }
                 }
             }
@@ -112,6 +130,11 @@ namespace TestProject.WebApi.Controllers
                     }
                 }
             }
+        }
+        [HttpOptions]
+        public HttpResponseMessage Options()
+        {
+            return new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
         }
     }
 }

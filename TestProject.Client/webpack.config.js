@@ -22,7 +22,11 @@ module.exports = {
 						presets: ['env', 'react', 'stage-0']
 					}
 				}
-			}
+			},
+			{
+				test: /\.css$/,
+				use: ['style-loader', 'css-loader']
+			  }
 		]
 	},
 	plugins: [

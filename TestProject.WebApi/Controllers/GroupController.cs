@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Microsoft.Web.Http;
+using Newtonsoft.Json;
 using TestProject.DataBase.DataBase;
 using TestProject.DataBase.DataBase.Entities;
 
 namespace TestProject.WebApi.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*", exposedHeaders: "*")]
     [ApiVersion("1.0")]
     public class GroupController : ApiController
     {
         //GET: api/Group
-        public IEnumerable<Group> Get()
+        public string Get()
         {
             try
             {
@@ -26,9 +31,14 @@ namespace TestProject.WebApi.Controllers
                     {
                         context.Groups.Load();
                         groups = context.Groups.ToList();
+                        return JsonConvert.SerializeObject(groups, Formatting.None,
+                            new JsonSerializerSettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
                     }
                 }
-                return groups;
             }
             catch (Exception e)
             {
@@ -65,14 +75,17 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Groups.Load();
-                    context.Groups.Add(value);
-                    context.SaveChanges();
+                    if (value != null)
+                    {
+                        context.Groups.Add(value);
+                        context.SaveChanges();
+                    }
                 }
             }
         }
 
         // PUT: api/Group/5
-        public void Put(int id, [FromBody]Group value)
+        public void Put(Group value)
         {
             using (var connection = ConnectToDataBase.GetConnection())
             {
@@ -80,7 +93,7 @@ namespace TestProject.WebApi.Controllers
                 using (var context = new TestProjectContext())
                 {
                     context.Groups.Load();
-                    var r = context.Groups.Find(id);
+                    var r = context.Groups.Find(value.Id);
                     if (r != null)
                     {
                         r.GroupName = value.GroupName;
@@ -109,6 +122,11 @@ namespace TestProject.WebApi.Controllers
                     }
                 }
             }
+        }
+        [HttpOptions]
+        public HttpResponseMessage Options()
+        {
+            return new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
         }
     }
 }
